@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hangman Game</title>
+  <style>
+    /* Your CSS styles here */
+  </style>
+</head>
+<body>
+
+  <h2>Hangman Game</h2>
+
+  <form id="hangmanForm">
+    <label for="guessInput">Guess a letter:</label>
+    <input type="text" id="guessInput" maxlength="1" style="text-transform: uppercase;" required>
+    <button type="submit">Submit Guess</button>
+  </form>
+
+  <script>
+    const expressions = ["ALGEBRA", "BETRIEB", "CHIMÄRE", "DEBATTE", "EINTOPF", "FALZUNG", "GEMISCH"];
+    let selectedExpression = expressions[Math.floor(Math.random() * expressions.length)];
+
+    let matches = "_".repeat(selectedExpression.length);
+    let attempts = 0;
+    const maxAttempts = 7;
+
+    function printGuess() {
+      console.log(matches.split("").join(" "));
+    }
+
+    function wrong(attempts) {
+      // Implement your logic for displaying the hangman figure based on the number of attempts
+      console.log(`Incorrect attempt #${attempts}`);
+    }
+
+    function lastWords() {
+      // Implement your logic to get the input from the user
+      return document.getElementById("guessInput").value.toUpperCase();
+    }
+
+    function submitGuess(guess) {
+      if (selectedExpression.includes(guess)) {
+        for (let i = 0; i < selectedExpression.length; i++) {
+          if (selectedExpression[i] === guess) {
+            matches = matches.substring(0, i) + guess + matches.substring(i + 1);
+          }
+        }
+      } else {
+        attempts++;
+        wrong(attempts);
+      }
+
+      printGuess();
+
+      if (!matches.includes("_")) {
+        console.log("Dieses Mal kommst du noch mit deinem Leben davon...");
+        resetGame();
+      } else if (attempts < maxAttempts) {
+        playGame();
+      } else {
+        console.log("Leider verloren. Das richtige Wort war: " + selectedExpression);
+        resetGame();
+      }
+    }
+
+    function playGame() {
+      document.getElementById("hangmanForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        const guess = lastWords();
+        submitGuess(guess);
+      });
+    }
+
+    function resetGame() {
+      selectedExpression = expressions[Math.floor(Math.random() * expressions.length)];
+      matches = "_".repeat(selectedExpression.length);
+      attempts = 0;
+      console.clear(); // Clear the console for a new game
+      document.getElementById("guessInput").value = ""; // Clear the input field
+      playGame();
+    }
+
+    // Start the game
+    playGame();
+  </script>
+
+</body>
+</html>
